@@ -221,10 +221,12 @@ export default function FoodWithCareNotePage() {
     <div className="min-h-screen bg-slate-50 p-4 md:p-8">
       <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1.2fr_0.8fr]">
         <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h1 className="text-2xl font-semibold">Food With Care Note — Driver</h1>
-          <p className="mt-2 text-sm text-slate-600">
-            Llegas, llamas, si contesta y autoriza, tomas foto del papel y abres el SMS con el link.
-          </p>
+          <h1 className="text-2xl font-semibold text-slate-900">
+  Food With Care Note — Driver
+</h1>
+<p className="mt-2 text-base text-slate-800">
+  Llegas, llamas, si contesta y autoriza, tomas foto del papel y abres el SMS con el link.
+</p>
 
           {!isCreatingCase ? (
             <div className="mt-8 space-y-4">
@@ -244,7 +246,7 @@ export default function FoodWithCareNotePage() {
             <>
               <div className="mt-6 grid gap-5 md:grid-cols-2">
                 <div>
-                  <label htmlFor="stopReference" className="mb-2 block text-sm font-medium">
+                  <label htmlFor="stopReference" className="mb-2 block text-base font-semibold text-slate-900">
                     Stop Reference
                   </label>
                   <input
@@ -252,12 +254,12 @@ export default function FoodWithCareNotePage() {
                     value={stopReference}
                     onChange={(e) => setStopReference(e.target.value)}
                     placeholder="Sergio Coto / ID 27237 / 126 Mobile St"
-                    className="w-full rounded-xl border border-slate-300 px-3 py-2"
+                    className="w-full rounded-xl border border-slate-400 bg-white px-3 py-3 text-base text-slate-900 placeholder:text-slate-500"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="phoneNumber" className="mb-2 block text-sm font-medium">
+                  <label htmlFor="phoneNumber" className="mb-2 block text-base font-semibold text-slate-900">
                     Phone Number
                   </label>
                   <input
@@ -266,13 +268,13 @@ export default function FoodWithCareNotePage() {
                     onChange={(e) => setPhoneNumber(formatPhone(e.target.value))}
                     placeholder="(786) 319-7894"
                     inputMode="tel"
-                    className="w-full rounded-xl border border-slate-300 px-3 py-2"
+                    className="w-full rounded-xl border border-slate-400 bg-white px-3 py-3 text-base text-slate-900 placeholder:text-slate-500"
                   />
                 </div>
               </div>
 
               <div className="mt-6">
-                <div className="mb-3 text-sm font-medium">Client answered?</div>
+                <div className="mb-3 text-base font-semibold text-slate-900">Client answered?</div>
                 <div className="flex gap-3">
                   <button
                     type="button"
@@ -301,7 +303,7 @@ export default function FoodWithCareNotePage() {
               </div>
 
               <div className="mt-6">
-                <div className="mb-3 text-sm font-medium">Paper Photo</div>
+                <div className="mb-3 text-base font-semibold text-slate-900">Paper Photo</div>
 
                 <input
                   ref={fileRef}
@@ -321,7 +323,7 @@ export default function FoodWithCareNotePage() {
                     Take Photo
                   </button>
 
-                  <div className="text-sm text-slate-600">
+                  <div className="text-base text-slate-800">
                     {photoName ? `Photo captured: ${photoName}` : "Photo captured: No"}
                   </div>
                 </div>
