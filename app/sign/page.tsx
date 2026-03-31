@@ -2,12 +2,30 @@
 
 import React, { useMemo, useRef, useState } from "react";
 import SignatureCanvas from "react-signature-canvas";
-const SIGNED_CASE_KEY = "fwc_signed_case";
+
+type ActiveCase = {
+  caseId: string;
+  stopReference: string;
+  phoneNumber: string;
+  clientAnswered: "Yes" | "No";
+  photoName: string;
+  status:
+    | "Not sent"
+    | "Prepared"
+    | "Signed"
+    | "Expired"
+    | "Escalated to office";
+  preparedAt: string;
+};
+
 export default function SignPage() {
   const sigRef = useRef<SignatureCanvas | null>(null);
+
   const [submitted, setSubmitted] = useState(false);
   const [signatureDataUrl, setSignatureDataUrl] = useState("");
   const [signedAt, setSignedAt] = useState("");
+  const [sending, setSending] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const canSubmit = useMemo(() => {
     if (!sigRef.current) return false;
@@ -19,6 +37,7 @@ export default function SignPage() {
     setSignatureDataUrl("");
     setSignedAt("");
     setSubmitted(false);
+    setErrorMessage("");
   };
 
   const handleEnd = () => {
@@ -26,30 +45,59 @@ export default function SignPage() {
     setSignatureDataUrl(sigRef.current.toDataURL("image/png"));
   };
 
-  const handleSubmit = () => {
-  if (!sigRef.current || sigRef.current.isEmpty()) return;
+  const handleSubmit = async () => {
+    if (!sigRef.current || sigRef.current.isEmpty()) return;
 
-  const dataUrl = sigRef.current.toDataURL("image/png");
-  const signedTimestamp = new Date().toLocaleString([], {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "numeric",
-    minute: "2-digit",
-  });
+    setSending(true);
+    setErrorMessage("");
 
-  setSignatureDataUrl(dataUrl);
-  setSignedAt(signedTimestamp);
-  setSubmitted(true);
+    try {
+      const dataUrl = sigRef.current.toDataURL("image/png");
+      const signedTimestamp = new Date().toLocaleString([], {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "numeric",
+        minute: "2-digit",
+      });
 
-  localStorage.setItem(
-    SIGNED_CASE_KEY,
-    JSON.stringify({
-      signed: true,
-      signedAt: signedTimestamp,
-    })
-  );
-};
+      const raw = localStorage.getItem("fwc_active_case");
+      if (!raw) {
+        throw new Error("No active case found.");
+      }
+
+      const activeCase: ActiveCase = JSON.parse(raw);
+
+      const res = await fetch("/api/send-signed-doc", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          stopReference: activeCase.stopReference,
+          phoneNumber: activeCase.phoneNumber,
+          signedAt: signedTimestamp,
+          signatureDataUrl: dataUrl,
+        }),
+      });
+
+      const json = await res.json();
+
+      if (!res.ok || !json.ok) {
+        throw new Error(json.error || "Email send failed.");
+      }
+
+      setSignatureDataUrl(dataUrl);
+      setSignedAt(signedTimestamp);
+      setSubmitted(true);
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Something went wrong.";
+      setErrorMessage(message);
+    } finally {
+      setSending(false);
+    }
+  };
 
   const handleDone = () => {
     window.close();
@@ -103,11 +151,18 @@ export default function SignPage() {
                 </div>
               </div>
 
+              {errorMessage ? (
+                <div className="mt-4 rounded-2xl border border-red-300 bg-red-50 p-4 text-sm text-red-900">
+                  {errorMessage}
+                </div>
+              ) : null}
+
               <div className="mt-6 grid gap-3 md:grid-cols-2">
                 <button
                   type="button"
                   className="rounded-2xl border border-slate-400 bg-white px-4 py-4 text-base font-semibold text-slate-950"
                   onClick={handleClear}
+                  disabled={sending}
                 >
                   Clear / Limpiar
                 </button>
@@ -115,18 +170,17 @@ export default function SignPage() {
                 <button
                   type="button"
                   className="rounded-2xl bg-black px-4 py-4 text-base font-semibold text-white disabled:opacity-50"
-                  disabled={!canSubmit}
+                  disabled={!canSubmit || sending}
                   onClick={handleSubmit}
                 >
-                  Submit / Enviar
+                  {sending ? "Sending..." : "Submit / Enviar"}
                 </button>
               </div>
             </>
           ) : (
             <>
               <div className="mt-6 rounded-2xl border border-green-300 bg-green-50 p-4 text-base text-green-900">
-                Thank you. Your authorization has been received. / Gracias. Su
-                autorización ha sido recibida.
+                Thank you. Your authorization has been received and emailed to the office. / Gracias. Su autorización fue recibida y enviada a la oficina.
               </div>
 
               <div className="mt-6 rounded-2xl border border-slate-300 bg-slate-50 p-5">
