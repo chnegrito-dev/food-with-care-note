@@ -36,15 +36,15 @@ function formatPhone(value: string) {
 function statusClass(status: CaseStatus) {
   switch (status) {
     case "Prepared":
-      return "bg-blue-100 text-blue-800";
+      return "bg-blue-100 text-blue-900";
     case "Signed":
-      return "bg-green-100 text-green-800";
+      return "bg-green-100 text-green-900";
     case "Expired":
-      return "bg-red-100 text-red-800";
+      return "bg-red-100 text-red-900";
     case "Escalated to office":
-      return "bg-purple-100 text-purple-800";
+      return "bg-purple-100 text-purple-900";
     default:
-      return "bg-slate-100 text-slate-800";
+      return "bg-slate-200 text-slate-900";
   }
 }
 
@@ -52,7 +52,6 @@ function createCaseId() {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
     return crypto.randomUUID();
   }
-
   return `fwc-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
@@ -136,11 +135,7 @@ export default function FoodWithCareNotePage() {
 
   const canOpenSms = useMemo(() => {
     const digits = phoneNumber.replace(/\D/g, "");
-    return (
-      digits.length === 10 &&
-      clientAnswered === "Yes" &&
-      !!photoName
-    );
+    return digits.length === 10 && clientAnswered === "Yes" && !!photoName;
   }, [phoneNumber, clientAnswered, photoName]);
 
   const handleTakePhoto = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -218,25 +213,26 @@ export default function FoodWithCareNotePage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 md:p-8">
-      <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h1 className="text-2xl font-semibold text-slate-900">
-  Food With Care Note — Driver
-</h1>
-<p className="mt-2 text-base text-slate-800">
-  Llegas, llamas, si contesta y autoriza, tomas foto del papel y abres el SMS con el link.
-</p>
+    <div className="min-h-screen bg-slate-100 p-3 md:p-8">
+      <div className="mx-auto grid max-w-6xl gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+        <div className="rounded-3xl border border-slate-300 bg-white p-5 shadow-sm">
+          <h1 className="text-2xl font-bold text-slate-950">
+            Food With Care Note — Driver
+          </h1>
+
+          <p className="mt-2 text-base leading-7 text-slate-800">
+            Llegas, llamas, si contesta y autoriza, tomas foto del papel y abres el SMS con el link.
+          </p>
 
           {!isCreatingCase ? (
-            <div className="mt-8 space-y-4">
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm text-slate-600">
+            <div className="mt-6 space-y-4">
+              <div className="rounded-2xl border border-slate-300 bg-slate-50 p-4 text-sm text-slate-800">
                 Ready for the next stop. Press Start New Case to capture authorization details.
               </div>
 
               <button
                 type="button"
-                className="w-full rounded-2xl bg-black px-4 py-4 text-base font-medium text-white"
+                className="w-full rounded-2xl bg-black px-4 py-4 text-base font-semibold text-white"
                 onClick={handleStartNewCase}
               >
                 Start New Case
@@ -246,7 +242,7 @@ export default function FoodWithCareNotePage() {
             <>
               <div className="mt-6 grid gap-5 md:grid-cols-2">
                 <div>
-                  <label htmlFor="stopReference" className="mb-2 block text-base font-semibold text-slate-900">
+                  <label htmlFor="stopReference" className="mb-2 block text-base font-semibold text-slate-950">
                     Stop Reference
                   </label>
                   <input
@@ -254,12 +250,12 @@ export default function FoodWithCareNotePage() {
                     value={stopReference}
                     onChange={(e) => setStopReference(e.target.value)}
                     placeholder="Sergio Coto / ID 27237 / 126 Mobile St"
-                    className="w-full rounded-xl border border-slate-400 bg-white px-3 py-3 text-base text-slate-900 placeholder:text-slate-500"
+                    className="w-full rounded-xl border border-slate-400 bg-white px-4 py-3 text-base text-slate-950 placeholder:text-slate-500"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="phoneNumber" className="mb-2 block text-base font-semibold text-slate-900">
+                  <label htmlFor="phoneNumber" className="mb-2 block text-base font-semibold text-slate-950">
                     Phone Number
                   </label>
                   <input
@@ -268,20 +264,23 @@ export default function FoodWithCareNotePage() {
                     onChange={(e) => setPhoneNumber(formatPhone(e.target.value))}
                     placeholder="(786) 319-7894"
                     inputMode="tel"
-                    className="w-full rounded-xl border border-slate-400 bg-white px-3 py-3 text-base text-slate-900 placeholder:text-slate-500"
+                    className="w-full rounded-xl border border-slate-400 bg-white px-4 py-3 text-base text-slate-950 placeholder:text-slate-500"
                   />
                 </div>
               </div>
 
               <div className="mt-6">
-                <div className="mb-3 text-base font-semibold text-slate-900">Client answered?</div>
+                <div className="mb-3 text-base font-semibold text-slate-950">
+                  Client answered?
+                </div>
+
                 <div className="flex gap-3">
                   <button
                     type="button"
-                    className={`rounded-2xl px-4 py-2 ${
+                    className={`rounded-2xl px-5 py-3 text-lg font-semibold ${
                       clientAnswered === "Yes"
                         ? "bg-black text-white"
-                        : "border border-slate-300 bg-white"
+                        : "border border-slate-400 bg-white text-slate-950"
                     }`}
                     onClick={() => setClientAnswered("Yes")}
                   >
@@ -290,10 +289,10 @@ export default function FoodWithCareNotePage() {
 
                   <button
                     type="button"
-                    className={`rounded-2xl px-4 py-2 ${
+                    className={`rounded-2xl px-5 py-3 text-lg font-semibold ${
                       clientAnswered === "No"
                         ? "bg-black text-white"
-                        : "border border-slate-300 bg-white"
+                        : "border border-slate-400 bg-white text-slate-950"
                     }`}
                     onClick={() => setClientAnswered("No")}
                   >
@@ -303,7 +302,9 @@ export default function FoodWithCareNotePage() {
               </div>
 
               <div className="mt-6">
-                <div className="mb-3 text-base font-semibold text-slate-900">Paper Photo</div>
+                <div className="mb-3 text-base font-semibold text-slate-950">
+                  Paper Photo
+                </div>
 
                 <input
                   ref={fileRef}
@@ -317,13 +318,13 @@ export default function FoodWithCareNotePage() {
                 <div className="flex flex-col gap-3 md:flex-row md:items-center">
                   <button
                     type="button"
-                    className="rounded-2xl border border-slate-300 bg-white px-4 py-2"
+                    className="rounded-2xl border border-slate-400 bg-white px-4 py-3 text-base font-semibold text-slate-950"
                     onClick={() => fileRef.current?.click()}
                   >
                     Take Photo
                   </button>
 
-                  <div className="text-base text-slate-800">
+                  <div className="text-base text-slate-900">
                     {photoName ? `Photo captured: ${photoName}` : "Photo captured: No"}
                   </div>
                 </div>
@@ -332,7 +333,7 @@ export default function FoodWithCareNotePage() {
               <div className="mt-6 grid gap-3 md:grid-cols-3">
                 <button
                   type="button"
-                  className="rounded-2xl bg-black px-4 py-3 text-white disabled:opacity-50"
+                  className="rounded-2xl bg-black px-4 py-4 text-base font-semibold text-white disabled:opacity-50"
                   disabled={!canOpenSms}
                   onClick={handleOpenSms}
                 >
@@ -341,7 +342,7 @@ export default function FoodWithCareNotePage() {
 
                 <button
                   type="button"
-                  className="rounded-2xl border border-slate-300 bg-white px-4 py-3"
+                  className="rounded-2xl border border-slate-400 bg-white px-4 py-4 text-base font-semibold text-slate-950"
                   onClick={handleEscalate}
                 >
                   Escalate to Office
@@ -349,7 +350,7 @@ export default function FoodWithCareNotePage() {
 
                 <button
                   type="button"
-                  className="rounded-2xl border border-slate-300 bg-white px-4 py-3"
+                  className="rounded-2xl border border-slate-400 bg-white px-4 py-4 text-base font-semibold text-slate-950"
                   onClick={handleCancelNewCase}
                 >
                   Cancel
@@ -357,7 +358,7 @@ export default function FoodWithCareNotePage() {
               </div>
 
               {!canOpenSms && (
-                <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+                <div className="mt-4 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
                   Para abrir el SMS necesitas: teléfono válido, cliente contestó = Yes, y foto del papel.
                 </div>
               )}
@@ -365,12 +366,12 @@ export default function FoodWithCareNotePage() {
           )}
         </div>
 
-        <div className="space-y-6">
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold">Status</h2>
+        <div className="space-y-4">
+          <div className="rounded-3xl border border-slate-300 bg-white p-5 shadow-sm">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-2xl font-bold text-slate-950">Status</h2>
               <span
-                className={`inline-flex rounded-full px-3 py-1 text-sm font-medium ${statusClass(
+                className={`inline-flex rounded-full px-4 py-2 text-base font-bold ${statusClass(
                   status
                 )}`}
               >
@@ -378,36 +379,40 @@ export default function FoodWithCareNotePage() {
               </span>
             </div>
 
-            <p className="mt-2 text-sm text-slate-600">Test email target: {OFFICE_TEST_EMAIL}</p>
+            <p className="mt-3 text-base text-slate-800">
+              Test email target: {OFFICE_TEST_EMAIL}
+            </p>
 
-            <div className="mt-4 grid gap-3 text-sm text-slate-700">
+            <div className="mt-5 grid gap-4 text-base text-slate-900">
               <div>
-                <span className="font-medium">Stop Reference:</span> {stopReference || "—"}
+                <span className="font-bold">Stop Reference:</span> {stopReference || "—"}
               </div>
               <div>
-                <span className="font-medium">Phone Number:</span> {phoneNumber || "—"}
+                <span className="font-bold">Phone Number:</span> {phoneNumber || "—"}
               </div>
               <div>
-                <span className="font-medium">Client answered:</span> {clientAnswered}
+                <span className="font-bold">Client answered:</span> {clientAnswered}
               </div>
               <div>
-                <span className="font-medium">Prepared at:</span> {preparedAt || "—"}
+                <span className="font-bold">Prepared at:</span> {preparedAt || "—"}
               </div>
             </div>
 
             {lastLink && (
-              <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <div className="text-sm font-medium">Last generated link</div>
-                <div className="mt-2 break-all text-xs text-slate-600">{lastLink}</div>
+              <div className="mt-5 rounded-2xl border border-slate-300 bg-slate-50 p-4">
+                <div className="text-sm font-bold text-slate-900">Last generated link</div>
+                <div className="mt-2 break-all text-xs text-slate-700">{lastLink}</div>
               </div>
             )}
           </div>
 
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-semibold">Client Signing Note Preview</h2>
+          <div className="rounded-3xl border border-slate-300 bg-white p-5 shadow-sm">
+            <h2 className="text-2xl font-bold text-slate-950">
+              Client Signing Note Preview
+            </h2>
 
-            <div className="mx-auto mt-4 max-w-md rounded-2xl border bg-white p-6 shadow-sm">
-              <div className="mb-8 flex justify-center">
+            <div className="mx-auto mt-4 max-w-md rounded-2xl border border-slate-300 bg-white p-5 shadow-sm">
+              <div className="mb-6 flex justify-center">
                 <img
                   src="/food-with-care-logo.png"
                   alt="Food With Care logo"
@@ -415,19 +420,19 @@ export default function FoodWithCareNotePage() {
                 />
               </div>
 
-              <div className="mb-12 text-center text-xl font-semibold leading-tight">
+              <div className="mb-10 text-center text-3xl font-bold leading-tight text-slate-950">
                 Please Leave The Box
                 <br />
-                Por Favor Deje La Caja
+                <span className="text-3xl">Por Favor Deje La Caja</span>
               </div>
 
-              <div className="mx-auto mb-3 h-px w-11/12 bg-black" />
+              <div className="mx-auto mb-4 h-px w-11/12 bg-black" />
 
-              <div className="text-center text-2xl font-semibold tracking-tight">
+              <div className="text-center text-3xl font-bold tracking-tight text-slate-950">
                 Signature / Firma
               </div>
 
-              <div className="mt-10 text-center text-xs text-slate-500">
+              <div className="mt-8 text-center text-base text-slate-700">
                 Cliente firma aquí desde el link.
               </div>
             </div>
