@@ -65,6 +65,12 @@ export default function FoodWithCareNotePage() {
   const [isCreatingCase, setIsCreatingCase] = useState(false);
   const [lastLink, setLastLink] = useState("");
 
+const isCreatingCaseRef = useRef(false);
+
+useEffect(() => {
+  isCreatingCaseRef.current = isCreatingCase;
+}, [isCreatingCase]);
+
   const fileRef = useRef<HTMLInputElement | null>(null);
 
   const resetAllFields = () => {
@@ -98,25 +104,29 @@ export default function FoodWithCareNotePage() {
     );
   };
 
-  const syncFromStorage = () => {
-    const raw = localStorage.getItem(ACTIVE_CASE_KEY);
+ const syncFromStorage = () => {
+  const raw = localStorage.getItem(ACTIVE_CASE_KEY);
 
-    if (!raw) {
-      resetAllFields();
-      setIsCreatingCase(false);
+  if (!raw) {
+    if (isCreatingCaseRef.current) {
       return;
     }
 
-    const activeCase: ActiveCase = JSON.parse(raw);
-
-    setStopReference(activeCase.stopReference || "");
-    setPhoneNumber(activeCase.phoneNumber || "");
-    setClientAnswered(activeCase.clientAnswered || "No");
-    setPhotoName(activeCase.photoName || "");
-    setStatus(activeCase.status || "Not sent");
-    setPreparedAt(activeCase.preparedAt || "");
+    resetAllFields();
     setIsCreatingCase(false);
-  };
+    return;
+  }
+
+  const activeCase: ActiveCase = JSON.parse(raw);
+
+  setStopReference(activeCase.stopReference || "");
+  setPhoneNumber(activeCase.phoneNumber || "");
+  setClientAnswered(activeCase.clientAnswered || "No");
+  setPhotoName(activeCase.photoName || "");
+  setStatus(activeCase.status || "Not sent");
+  setPreparedAt(activeCase.preparedAt || "");
+  setIsCreatingCase(false);
+};
 
   useEffect(() => {
     syncFromStorage();
