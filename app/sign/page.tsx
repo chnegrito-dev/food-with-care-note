@@ -2,7 +2,7 @@
 
 import React, { useMemo, useRef, useState } from "react";
 import SignatureCanvas from "react-signature-canvas";
-
+const SIGNED_CASE_KEY = "fwc_signed_case";
 export default function SignPage() {
   const sigRef = useRef<SignatureCanvas | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -27,21 +27,29 @@ export default function SignPage() {
   };
 
   const handleSubmit = () => {
-    if (!sigRef.current || sigRef.current.isEmpty()) return;
+  if (!sigRef.current || sigRef.current.isEmpty()) return;
 
-    const dataUrl = sigRef.current.toDataURL("image/png");
-    setSignatureDataUrl(dataUrl);
-    setSignedAt(
-      new Date().toLocaleString([], {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "numeric",
-        minute: "2-digit",
-      })
-    );
-    setSubmitted(true);
-  };
+  const dataUrl = sigRef.current.toDataURL("image/png");
+  const signedTimestamp = new Date().toLocaleString([], {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+
+  setSignatureDataUrl(dataUrl);
+  setSignedAt(signedTimestamp);
+  setSubmitted(true);
+
+  localStorage.setItem(
+    SIGNED_CASE_KEY,
+    JSON.stringify({
+      signed: true,
+      signedAt: signedTimestamp,
+    })
+  );
+};
 
   const handleDone = () => {
     window.close();

@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 
 const OFFICE_TEST_EMAIL = "hnegrito@yahoo.com";
 const ACTIVE_CASE_KEY = "fwc_active_case";
+const SIGNED_CASE_KEY = "fwc_signed_case";
 
 type CaseStatus =
   | "Not sent"
@@ -64,7 +65,7 @@ export default function FoodWithCareNotePage() {
   const [preparedAt, setPreparedAt] = useState("");
   const [isCreatingCase, setIsCreatingCase] = useState(false);
   const [lastLink, setLastLink] = useState("");
-
+  
 const isCreatingCaseRef = useRef(false);
 
 useEffect(() => {
@@ -104,7 +105,17 @@ useEffect(() => {
     );
   };
 
- const syncFromStorage = () => {
+const syncFromStorage = () => {
+  const signedRaw = localStorage.getItem(SIGNED_CASE_KEY);
+
+  if (signedRaw) {
+    localStorage.removeItem(SIGNED_CASE_KEY);
+    localStorage.removeItem(ACTIVE_CASE_KEY);
+    resetAllFields();
+    setIsCreatingCase(false);
+    return;
+  }
+
   const raw = localStorage.getItem(ACTIVE_CASE_KEY);
 
   if (!raw) {
