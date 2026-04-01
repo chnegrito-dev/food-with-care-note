@@ -61,12 +61,14 @@ export default function SignPage() {
         minute: "2-digit",
       });
 
-      const raw = localStorage.getItem("fwc_active_case");
-      if (!raw) {
-        throw new Error("No active case found.");
-      }
+      const params = new URLSearchParams(window.location.search);
 
-      const activeCase: ActiveCase = JSON.parse(raw);
+const stopReference = params.get("stopReference") || "";
+const phoneNumber = params.get("phoneNumber") || "";
+
+if (!stopReference || !phoneNumber) {
+  throw new Error("Missing case data in link.");
+}
 
       const res = await fetch("/api/send-signed-doc", {
         method: "POST",
@@ -74,11 +76,11 @@ export default function SignPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          stopReference: activeCase.stopReference,
-          phoneNumber: activeCase.phoneNumber,
-          signedAt: signedTimestamp,
-          signatureDataUrl: dataUrl,
-        }),
+  stopReference,
+  phoneNumber,
+  signedAt: signedTimestamp,
+  signatureDataUrl: dataUrl,
+}),
       });
 
       const json = await res.json();

@@ -191,9 +191,10 @@ const syncFromStorage = () => {
       process.env.NEXT_PUBLIC_SIGN_BASE_URL || window.location.origin;
 
     const signUrl =
-      `${signBaseUrl}/sign` +
-      `?caseId=${encodeURIComponent(caseId)}` +
-      `&stopReference=${encodeURIComponent(stopReference)}`;
+  `${signBaseUrl}/sign` +
+  `?caseId=${encodeURIComponent(caseId)}` +
+  `&stopReference=${encodeURIComponent(stopReference)}` +
+  `&phoneNumber=${encodeURIComponent(phoneNumber)}`;
 
     const message =
       `Food With Care: secure link to sign for your delivery. ${signUrl}`;
