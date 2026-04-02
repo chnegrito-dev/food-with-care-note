@@ -69,8 +69,10 @@ const phoneNumber = params.get("phoneNumber") || "";
 if (!stopReference || !phoneNumber) {
   throw new Error("Missing case data in link.");
 }
+       const apiUrl = "/api/send-signed-doc";
+console.log("Submitting to:", apiUrl);
 
-      const res = await fetch("/api/send-signed-doc", {
+      const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -83,11 +85,18 @@ if (!stopReference || !phoneNumber) {
 }),
       });
 
-      const json = await res.json();
+      const contentType = response.headers.get("content-type") || "";
+const rawText = await response.text();
 
-      if (!res.ok || !json.ok) {
-        throw new Error(json.error || "Email send failed.");
-      }
+if (!response.ok) {
+  throw new Error(`Request failed (${response.status}): ${rawText.slice(0, 200)}`);
+}
+
+if (!contentType.includes("application/json")) {
+  throw new Error(`Expected JSON but got: ${rawText.slice(0, 200)}`);
+}
+
+const result = JSON.parse(rawText);
 
       setSignatureDataUrl(dataUrl);
       setSignedAt(signedTimestamp);
