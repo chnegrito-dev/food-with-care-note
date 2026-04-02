@@ -69,7 +69,7 @@ const phoneNumber = params.get("phoneNumber") || "";
 if (!stopReference || !phoneNumber) {
   throw new Error("Missing case data in link.");
 }
-       const apiUrl = "/api/send-signed-doc";
+       const apiUrl = "https://food-with-care-api.vercel.app/api/send-signed-doc";
 console.log("Submitting to:", apiUrl);
 
       const response = await fetch(apiUrl, {
