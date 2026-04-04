@@ -5,6 +5,7 @@ import { useRef, useEffect, useState } from "react";
 export default function SignPage() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [drawing, setDrawing] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -70,15 +71,50 @@ export default function SignPage() {
     ctx?.clearRect(0, 0, canvas.width, canvas.height);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const signature = canvas.toDataURL("image/png");
 
-    console.log("Signature:", signature);
+    const params = new URLSearchParams(window.location.search);
+    const stopReference = params.get("stopReference");
+    const phoneNumber = params.get("phoneNumber");
 
-    alert("Signature captured (next step: send to API)");
+    if (!stopReference || !phoneNumber) {
+      alert("Missing required data");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/send-signed-doc`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            stopReference,
+            phoneNumber,
+            signature,
+          }),
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Failed to send");
+      }
+
+      alert("Signature sent successfully");
+    } catch (err) {
+      console.error(err);
+      alert("Error sending signature");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -89,7 +125,6 @@ export default function SignPage() {
 
       <h3>Signature / Firma</h3>
 
-      {/* 🔥 CANVAS REAL */}
       <canvas
         ref={canvasRef}
         width={350}
@@ -103,12 +138,16 @@ export default function SignPage() {
 
       <p>Sign with your finger / Firme con su dedo</p>
 
-      <button onClick={handleClear}>
+      <button onClick={handleClear} disabled={loading}>
         Clear / Limpiar
       </button>
 
-      <button onClick={handleSubmit} style={{ marginLeft: 10 }}>
-        Submit / Enviar
+      <button
+        onClick={handleSubmit}
+        disabled={loading}
+        style={{ marginLeft: 10 }}
+      >
+        {loading ? "Sending..." : "Submit / Enviar"}
       </button>
     </div>
   );
