@@ -3,33 +3,33 @@
 import { useState } from "react";
 
 export default function Home() {
+  const [caseId, setCaseId] = useState("");
   const [stopId, setStopId] = useState("");
   const [phone, setPhone] = useState("");
   const [photo, setPhoto] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleSend = async () => {
-    if (!stopId || !phone || !photo) {
-      alert("Complete all fields");
-      return;
-    }
-
+  const handleSubmit = async () => {
     try {
       setLoading(true);
 
-      const caseId = crypto.randomUUID();
+      if (!caseId || !stopId || !phone) {
+        alert("Fill all required fields");
+        return;
+      }
 
-      // Convert photo to base64
-      const reader = new FileReader();
+      let photoDataUrl = "";
 
-      const photoDataUrl: string = await new Promise((resolve) => {
-        reader.onloadend = () => {
-          resolve(typeof reader.result === "string" ? reader.result : "");
-        };
-        reader.readAsDataURL(photo);
-      });
+      if (photo) {
+        const reader = new FileReader();
 
-      // 🔥 CREATE CASE (API)
+        photoDataUrl = await new Promise<string>((resolve, reject) => {
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(photo);
+        });
+      }
+
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/create-case`,
         {
@@ -46,18 +46,20 @@ export default function Home() {
         }
       );
 
+      const text = await res.text();
+      console.log("API RESPONSE:", text);
+
       if (!res.ok) {
-        throw new Error("Error creating case");
+        alert("ERROR:\n" + text);
+        return;
       }
 
-      // 🔥 LINK REAL (SIGN PAGE)
       const link = `${process.env.NEXT_PUBLIC_SIGN_BASE_URL}/sign?caseId=${caseId}`;
 
-      // 🔥 OPEN SMS
       window.location.href = `sms:${phone}?body=${encodeURIComponent(link)}`;
-    } catch (err) {
-      console.error(err);
-      alert("Error sending case");
+    } catch (error: any) {
+      console.error(error);
+      alert("Unexpected error:\n" + error.message);
     } finally {
       setLoading(false);
     }
@@ -68,32 +70,36 @@ export default function Home() {
       <h1>Food With Care Driver</h1>
 
       <input
+        placeholder="Case ID"
+        value={caseId}
+        onChange={(e) => setCaseId(e.target.value)}
+        style={{ display: "block", marginBottom: 10, width: 300 }}
+      />
+
+      <input
         placeholder="Stop ID"
         value={stopId}
         onChange={(e) => setStopId(e.target.value)}
+        style={{ display: "block", marginBottom: 10, width: 300 }}
       />
-
-      <br /><br />
 
       <input
         placeholder="Phone"
         value={phone}
         onChange={(e) => setPhone(e.target.value)}
+        style={{ display: "block", marginBottom: 10, width: 300 }}
       />
-
-      <br /><br />
 
       <input
         type="file"
         accept="image/*"
         capture="environment"
         onChange={(e) => setPhoto(e.target.files?.[0] || null)}
+        style={{ display: "block", marginBottom: 10 }}
       />
 
-      <br /><br />
-
-      <button onClick={handleSend} disabled={loading}>
-        {loading ? "Sending..." : "Send SMS"}
+      <button onClick={handleSubmit} disabled={loading}>
+        {loading ? "Sending..." : "Send Case"}
       </button>
     </main>
   );
