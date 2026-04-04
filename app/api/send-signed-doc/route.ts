@@ -26,28 +26,28 @@ export async function POST(req: Request) {
           const transporter = nodemailer.createTransport({
             host: process.env.SMTP_HOST,
             port: Number(process.env.SMTP_PORT),
-            secure: true, // 🔥 IMPORTANTE (465 = true)
+            secure: false, // 🔥 IMPORTANTE (587 = false)
             auth: {
               user: process.env.SMTP_USER,
               pass: process.env.SMTP_PASS,
             },
           });
 
-          await transporter.sendMail({
-            from: `"Food With Care" <${process.env.SMTP_USER}>`,
-            to: process.env.RECEIVER_EMAIL,
-            subject: `Signed Document - ${stopReference}`,
-            text: `
-Stop Reference: ${stopReference}
-Phone Number: ${phoneNumber}
-            `,
-            attachments: [
-              {
-                filename: "signature.pdf",
-                content: pdfData,
-              },
-            ],
-          });
+        await transporter.verify();
+
+await transporter.sendMail({
+  from: `"Food With Care" <${process.env.SMTP_USER}>`,
+  to: process.env.RECEIVER_EMAIL,
+  subject: `Signed Document - ${stopReference}`,
+  text: `Stop Reference: ${stopReference}
+Phone Number: ${phoneNumber}`,
+  attachments: [
+    {
+      filename: "signature.pdf",
+      content: pdfData,
+    },
+  ],
+});
 
           resolve(NextResponse.json({ success: true }));
         } catch (error) {
