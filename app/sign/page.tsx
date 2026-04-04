@@ -89,24 +89,24 @@ export default function SignPage() {
     try {
       setLoading(true);
 
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/send-signed-doc`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            stopReference,
-            phoneNumber,
-            signature,
-          }),
-        }
-      );
+      const res = await fetch("/api/send-signed-doc", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    stopReference,
+    phoneNumber,
+    signature,
+  }),
+});
 
-      if (!res.ok) {
-        throw new Error("Failed to send");
-      }
+if (!res.ok) {
+  alert("Error sending signature");
+  return;
+}
+
+alert("Signature sent successfully");
 
       alert("Signature sent successfully");
     } catch (err) {
