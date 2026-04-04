@@ -4,7 +4,7 @@ import { useRef, useEffect, useState } from "react";
 
 export default function SignPage() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [drawing, setDrawing] = useState(false);
+  const drawingRef = useRef(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -20,53 +20,65 @@ export default function SignPage() {
 
     const getPos = (e: any) => {
       const rect = canvas.getBoundingClientRect();
+
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
       return {
-        x: (e.touches ? e.touches[0].clientX : e.clientX) - rect.left,
-        y: (e.touches ? e.touches[0].clientY : e.clientY) - rect.top,
+        x: clientX - rect.left,
+        y: clientY - rect.top,
       };
     };
 
     const start = (e: any) => {
-      setDrawing(true);
+      e.preventDefault();
+      drawingRef.current = true;
+
       const pos = getPos(e);
       ctx.beginPath();
       ctx.moveTo(pos.x, pos.y);
     };
 
     const move = (e: any) => {
-      if (!drawing) return;
+      if (!drawingRef.current) return;
+
+      e.preventDefault();
+
       const pos = getPos(e);
       ctx.lineTo(pos.x, pos.y);
       ctx.stroke();
     };
 
     const stop = () => {
-      setDrawing(false);
+      drawingRef.current = false;
       ctx.closePath();
     };
 
+    // mouse
     canvas.addEventListener("mousedown", start);
     canvas.addEventListener("mousemove", move);
-    canvas.addEventListener("mouseup", stop);
+    window.addEventListener("mouseup", stop);
 
-    canvas.addEventListener("touchstart", start);
-    canvas.addEventListener("touchmove", move);
-    canvas.addEventListener("touchend", stop);
+    // touch (IMPORTANTE: passive false)
+    canvas.addEventListener("touchstart", start, { passive: false });
+    canvas.addEventListener("touchmove", move, { passive: false });
+    window.addEventListener("touchend", stop);
 
     return () => {
       canvas.removeEventListener("mousedown", start);
       canvas.removeEventListener("mousemove", move);
-      canvas.removeEventListener("mouseup", stop);
+      window.removeEventListener("mouseup", stop);
 
       canvas.removeEventListener("touchstart", start);
       canvas.removeEventListener("touchmove", move);
-      canvas.removeEventListener("touchend", stop);
+      window.removeEventListener("touchend", stop);
     };
-  }, [drawing]);
+  }, []);
 
   const handleClear = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+
     const ctx = canvas.getContext("2d");
     ctx?.clearRect(0, 0, canvas.width, canvas.height);
   };
@@ -78,10 +90,10 @@ export default function SignPage() {
     const signature = canvas.toDataURL("image/png");
 
     const params = new URLSearchParams(window.location.search);
-    const stopReference = params.get("stopReference");
+    const caseId = params.get("caseId");
     const phoneNumber = params.get("phoneNumber");
 
-    if (!stopReference || !phoneNumber) {
+    if (!caseId || !phoneNumber) {
       alert("Missing required data");
       return;
     }
@@ -90,23 +102,21 @@ export default function SignPage() {
       setLoading(true);
 
       const res = await fetch("/api/send-signed-doc", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-    stopReference,
-    phoneNumber,
-    signature,
-  }),
-});
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          caseId,
+          phoneNumber,
+          signature,
+        }),
+      });
 
-if (!res.ok) {
-  alert("Error sending signature");
-  return;
-}
-
-alert("Signature sent successfully");
+      if (!res.ok) {
+        alert("Error sending signature");
+        return;
+      }
 
       alert("Signature sent successfully");
     } catch (err) {
@@ -133,6 +143,7 @@ alert("Signature sent successfully");
           border: "2px solid black",
           borderRadius: 10,
           background: "white",
+          touchAction: "none", // 🔥 CRÍTICO
         }}
       />
 

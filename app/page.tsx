@@ -4,7 +4,7 @@ import { useState } from "react";
 
 export default function DriverPage() {
   const [form, setForm] = useState({
-    stopReference: "",
+    caseId: "",
     phoneNumber: "",
     clientAnswered: false,
     photoTaken: false,
@@ -13,18 +13,16 @@ export default function DriverPage() {
   const [status, setStatus] = useState("Not sent");
   const [generatedLink, setGeneratedLink] = useState("");
 
-  // 🔥 VALIDACIÓN REAL (SIN PARCHE)
   const canSendSMS =
-    form.stopReference &&
+    form.caseId &&
     form.phoneNumber &&
     form.clientAnswered &&
     form.photoTaken;
 
-  // 🔧 FUNCIÓN SMS (BIEN HECHA)
   const handleOpenSMS = () => {
     const cleanPhone = form.phoneNumber.replace(/\D/g, "");
 
-    const link = `${process.env.NEXT_PUBLIC_SIGN_BASE_URL}/sign?stopReference=${form.stopReference}&phoneNumber=${cleanPhone}`;
+    const link = `${process.env.NEXT_PUBLIC_SIGN_BASE_URL}/sign?caseId=${form.caseId}&phoneNumber=${cleanPhone}`;
 
     const message = encodeURIComponent(
       `Please sign your delivery:\n${link}`
@@ -53,12 +51,12 @@ export default function DriverPage() {
 
       {/* INPUTS */}
       <div>
-        <label>Stop Reference</label>
+        <label>Case ID</label>
         <br />
         <input
-          value={form.stopReference}
+          value={form.caseId}
           onChange={(e) =>
-            setForm({ ...form, stopReference: e.target.value })
+            setForm({ ...form, caseId: e.target.value })
           }
         />
       </div>
@@ -108,13 +106,16 @@ export default function DriverPage() {
       <div>
         <label>Paper Photo</label>
         <br />
-        <button
-          onClick={() =>
-            setForm({ ...form, photoTaken: true })
-          }
-        >
-          Take Photo (mock)
-        </button>
+        <input
+          type="file"
+          accept="image/*"
+          capture="environment"
+          onChange={(e) => {
+            if (e.target.files && e.target.files.length > 0) {
+              setForm({ ...form, photoTaken: true });
+            }
+          }}
+        />
 
         <p>
           Photo captured:{" "}
@@ -138,7 +139,7 @@ export default function DriverPage() {
       <button
         onClick={() => {
           setForm({
-            stopReference: "",
+            caseId: "",
             phoneNumber: "",
             clientAnswered: false,
             photoTaken: false,
@@ -153,7 +154,7 @@ export default function DriverPage() {
       {/* STATUS */}
       <h2>Status</h2>
       <p>{status}</p>
-      <p>Stop Reference: {form.stopReference}</p>
+      <p>Case ID: {form.caseId}</p>
       <p>Phone Number: {form.phoneNumber}</p>
       <p>
         Client answered:{" "}
