@@ -11,6 +11,7 @@ type SignedPayload = {
   phoneNumber: string;
   signedAt: string;
   signatureDataUrl: string;
+  photoDataUrl?: string;
 };
 
 function dataUrlToBytes(dataUrl: string): Uint8Array {
@@ -23,6 +24,7 @@ async function buildPdf({
   phoneNumber,
   signedAt,
   signatureDataUrl,
+  photoDataUrl,
 }: SignedPayload) {
   const pdfDoc = await PDFDocument.create();
   const page = pdfDoc.addPage([612, 792]);
@@ -34,102 +36,142 @@ async function buildPdf({
   const marginX = 50;
   let y = height - 50;
 
+  // 🔷 LOGO CENTRADO GRANDE
   const logoPath = path.join(process.cwd(), "public", "food-with-care-logo.png");
   if (fs.existsSync(logoPath)) {
     const logoBytes = fs.readFileSync(logoPath);
     const logoImage = await pdfDoc.embedPng(logoBytes);
-    const logoDims = logoImage.scale(0.33);
+
+    const logoWidth = 180;
+    const logoHeight = 80;
+
     page.drawImage(logoImage, {
-      x: (width - logoDims.width) / 2,
-      y: y - logoDims.height,
-      width: logoDims.width,
-      height: logoDims.height,
+      x: (width - logoWidth) / 2,
+      y: y - logoHeight,
+      width: logoWidth,
+      height: logoHeight,
     });
-    y -= logoDims.height + 24;
+
+    y -= logoHeight + 20;
   }
 
-  page.drawText("Food With Care Delivery Authorization", {
+  // 🔷 TÍTULO
+  page.drawText("DELIVERY AUTHORIZATION", {
     x: marginX,
     y,
-    size: 18,
+    size: 20,
     font: fontBold,
-    color: rgb(0, 0, 0),
   });
+
   y -= 30;
 
-  page.drawText(`Stop Reference: ${stopReference || "-"}`, {
+  // 🔷 CAJA DE INFORMACIÓN
+  page.drawRectangle({
     x: marginX,
-    y,
+    y: y - 90,
+    width: width - marginX * 2,
+    height: 90,
+    borderWidth: 1,
+    borderColor: rgb(0.7, 0.7, 0.7),
+  });
+
+  let infoY = y - 25;
+
+  page.drawText(`Stop: ${stopReference}`, {
+    x: marginX + 10,
+    y: infoY,
     size: 12,
     font: fontRegular,
   });
-  y -= 20;
 
-  page.drawText(`Phone Number: ${phoneNumber || "-"}`, {
-    x: marginX,
-    y,
+  infoY -= 20;
+
+  page.drawText(`Phone: ${phoneNumber}`, {
+    x: marginX + 10,
+    y: infoY,
     size: 12,
     font: fontRegular,
   });
-  y -= 20;
 
-  page.drawText(`Signed At: ${signedAt || "-"}`, {
-    x: marginX,
-    y,
+  infoY -= 20;
+
+  page.drawText(`Signed: ${signedAt}`, {
+    x: marginX + 10,
+    y: infoY,
     size: 12,
     font: fontRegular,
   });
-  y -= 35;
 
-  page.drawText("Please Leave The Box", {
+  y -= 120;
+
+  // 🔷 MENSAJE CENTRAL
+  page.drawText("PLEASE LEAVE THE BOX", {
     x: marginX,
     y,
     size: 18,
     font: fontBold,
   });
-  y -= 24;
 
-  page.drawText("Por Favor Deje La Caja", {
+  y -= 25;
+
+  page.drawText("POR FAVOR DEJE LA CAJA", {
     x: marginX,
     y,
     size: 16,
     font: fontBold,
   });
-  y -= 28;
 
+  y -= 30;
+
+  // 🔷 LÍNEA
   page.drawLine({
     start: { x: marginX, y },
     end: { x: width - marginX, y },
     thickness: 1,
-    color: rgb(0, 0, 0),
   });
+
   y -= 30;
 
+  // 🔷 FIRMA
   page.drawText("Signature / Firma", {
     x: marginX,
     y,
-    size: 16,
+    size: 14,
     font: fontBold,
   });
-  y -= 170;
+
+  y -= 150;
+
+// 📸 FOTO DEL DELIVERY
+if (photoDataUrl) {
+  const photoBytes = dataUrlToBytes(photoDataUrl);
+  let photoImage;
+
+try {
+  photoImage = await pdfDoc.embedJpg(photoBytes);
+} catch {
+  photoImage = await pdfDoc.embedPng(photoBytes);
+}
+
+  const photoWidth = 200;
+  const photoHeight = 150;
+
+  page.drawImage(photoImage, {
+    x: width - marginX - photoWidth,
+    y: y + 40,
+    width: photoWidth,
+    height: photoHeight,
+  });
+}
 
   const signatureBytes = dataUrlToBytes(signatureDataUrl);
   const signatureImage = await pdfDoc.embedPng(signatureBytes);
 
-  const maxSigWidth = width - marginX * 2;
-  const maxSigHeight = 140;
-  const sigDims = signatureImage.scale(1);
-
-  const sigScale = Math.min(
-    maxSigWidth / sigDims.width,
-    maxSigHeight / sigDims.height
-  );
-
   page.drawImage(signatureImage, {
     x: marginX,
     y,
-    width: sigDims.width * sigScale,
-    height: sigDims.height * sigScale,
+    width: 250,
+    height: 100,
   });
 
   return Buffer.from(await pdfDoc.save());
@@ -175,7 +217,12 @@ export async function POST(req: Request) {
     }
 
     const pdfBuffer = await buildPdf(body);
+let photoBuffer: Buffer | null = null;
 
+if (body.photoDataUrl) {
+  const base64 = body.photoDataUrl.split(",")[1] || "";
+  photoBuffer = Buffer.from(base64, "base64");
+}
     const transporter = nodemailer.createTransport({
       host: SMTP_HOST,
       port: Number(SMTP_PORT),
@@ -195,15 +242,24 @@ export async function POST(req: Request) {
         `Stop Reference: ${body.stopReference}\n` +
         `Phone Number: ${body.phoneNumber}\n` +
         `Signed At: ${body.signedAt}\n`,
-      attachments: [
+     attachments: [
+  {
+    filename: `food-with-care-authorization-${body.stopReference
+      .replace(/[^a-z0-9-_]+/gi, "-")
+      .toLowerCase()}.pdf`,
+    content: pdfBuffer,
+    contentType: "application/pdf",
+  },
+  ...(photoBuffer
+    ? [
         {
-          filename: `food-with-care-authorization-${body.stopReference
-            .replace(/[^a-z0-9-_]+/gi, "-")
-            .toLowerCase()}.pdf`,
-          content: pdfBuffer,
-          contentType: "application/pdf",
+          filename: "delivery-photo.jpg",
+          content: photoBuffer,
+          contentType: "image/jpeg",
         },
-      ],
+      ]
+    : []),
+],
     });
 
     return NextResponse.json({ ok: true });
