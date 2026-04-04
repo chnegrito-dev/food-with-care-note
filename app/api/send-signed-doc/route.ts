@@ -4,9 +4,9 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { caseId, phoneNumber, signature } = await req.json();
+    const { stopReference, phoneNumber, signature } = await req.json();
 
-    if (!caseId || !phoneNumber || !signature) {
+    if (!stopReference || !phoneNumber || !signature) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
           const transporter = nodemailer.createTransport({
             host: process.env.SMTP_HOST,
             port: Number(process.env.SMTP_PORT),
-            secure: Number(process.env.SMTP_PORT) === 465, // 🔥 automático
+            secure: true, // 🔥 IMPORTANTE (465 = true)
             auth: {
               user: process.env.SMTP_USER,
               pass: process.env.SMTP_PASS,
@@ -36,14 +36,14 @@ export async function POST(req: Request) {
           await transporter.sendMail({
             from: `"Food With Care" <${process.env.SMTP_USER}>`,
             to: process.env.RECEIVER_EMAIL,
-            subject: `Signed Document - ${caseId}`,
+            subject: `Signed Document - ${stopReference}`,
             text: `
-Case ID: ${caseId}
+Stop Reference: ${stopReference}
 Phone Number: ${phoneNumber}
             `,
             attachments: [
               {
-                filename: `signed-${caseId}.pdf`,
+                filename: "signature.pdf",
                 content: pdfData,
               },
             ],
@@ -62,7 +62,7 @@ Phone Number: ${phoneNumber}
         }
       });
 
-      // PDF CONTENT
+      // PDF
       doc.fontSize(18).text("Food With Care", { align: "center" });
 
       doc.moveDown();
@@ -70,28 +70,21 @@ Phone Number: ${phoneNumber}
       doc.text("Por Favor Deje La Caja");
 
       doc.moveDown();
-      doc.text(`Case ID: ${caseId}`);
+      doc.text(`Stop Reference: ${stopReference}`);
       doc.text(`Phone Number: ${phoneNumber}`);
 
       doc.moveDown();
       doc.text("Signature:");
 
-      // 🔥 LIMPIEZA BASE64 CORRECTA
-      const base64Data = signature.includes(",")
-        ? signature.split(",")[1]
-        : signature;
+      let base64Data = signature;
+      if (base64Data.includes(",")) {
+        base64Data = base64Data.split(",")[1];
+      }
 
       const imgBuffer = Buffer.from(base64Data, "base64");
 
-      if (!imgBuffer || imgBuffer.length === 0) {
-        throw new Error("Invalid signature image");
-      }
-
-      doc.moveDown();
-
-      // 🔥 FORMA SEGURA (sin errores de PDFKit)
-      doc.image(imgBuffer, 50, doc.y, {
-        width: 200,
+      doc.image(imgBuffer, {
+        fit: [250, 150],
       });
 
       doc.end();
