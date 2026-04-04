@@ -13,6 +13,9 @@ export async function POST(req: Request) {
       );
     }
 
+    // =========================
+    // GENERAR PDF
+    // =========================
     const doc = new PDFDocument();
     const buffers: Buffer[] = [];
 
@@ -23,31 +26,37 @@ export async function POST(req: Request) {
         try {
           const pdfData = Buffer.concat(buffers);
 
+          // =========================
+          // CONFIG SMTP (FIX REAL)
+          // =========================
           const transporter = nodemailer.createTransport({
-            host: process.env.SMTP_HOST,
-            port: Number(process.env.SMTP_PORT),
-            secure: false, // 🔥 IMPORTANTE (587 = false)
+            host: "smtp.gmail.com",
+            port: 465,
+            secure: true, // 🔥 IMPORTANTE
             auth: {
               user: process.env.SMTP_USER,
               pass: process.env.SMTP_PASS,
             },
           });
 
-        await transporter.verify();
+          // TEST SMTP (CLAVE PARA DEBUG)
+          await transporter.verify();
 
-await transporter.sendMail({
-  from: `"Food With Care" <${process.env.SMTP_USER}>`,
-  to: process.env.RECEIVER_EMAIL,
-  subject: `Signed Document - ${stopReference}`,
-  text: `Stop Reference: ${stopReference}
-Phone Number: ${phoneNumber}`,
-  attachments: [
-    {
-      filename: "signature.pdf",
-      content: pdfData,
-    },
-  ],
-});
+          await transporter.sendMail({
+            from: `"Food With Care" <${process.env.SMTP_USER}>`,
+            to: process.env.RECEIVER_EMAIL,
+            subject: `Signed Document - ${stopReference}`,
+            text: `
+Stop Reference: ${stopReference}
+Phone Number: ${phoneNumber}
+            `,
+            attachments: [
+              {
+                filename: "signature.pdf",
+                content: pdfData,
+              },
+            ],
+          });
 
           resolve(NextResponse.json({ success: true }));
         } catch (error) {
@@ -62,7 +71,9 @@ Phone Number: ${phoneNumber}`,
         }
       });
 
-      // PDF
+      // =========================
+      // CONTENIDO PDF
+      // =========================
       doc.fontSize(18).text("Food With Care", { align: "center" });
 
       doc.moveDown();
@@ -76,6 +87,7 @@ Phone Number: ${phoneNumber}`,
       doc.moveDown();
       doc.text("Signature:");
 
+      // LIMPIAR BASE64
       let base64Data = signature;
       if (base64Data.includes(",")) {
         base64Data = base64Data.split(",")[1];
