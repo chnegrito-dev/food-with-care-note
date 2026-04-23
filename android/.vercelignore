@@ -1,0 +1,7 @@
+android
+.next
+node_modules
+.git
+.vercel
+*.apk
+*.aab
