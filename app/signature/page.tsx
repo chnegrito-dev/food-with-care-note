@@ -179,20 +179,20 @@ export default function SignaturePage() {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          background: '#f3f4f6',
+          background: '#eef2f7',
           padding: '20px',
         }}
       >
         <div
           style={{
-            background: 'white',
-            padding: '24px',
-            borderRadius: '16px',
+            background: '#ffffff',
+            padding: '28px',
+            borderRadius: '18px',
             width: '100%',
-            maxWidth: '360px',
+            maxWidth: '380px',
             textAlign: 'center',
-            boxShadow: '0 10px 25px rgba(0,0,0,0.08)',
-            border: '1px solid #e5e7eb',
+            boxShadow: '0 14px 30px rgba(0,0,0,0.10)',
+            border: '1px solid #d1d5db',
           }}
         >
           <div
@@ -201,13 +201,13 @@ export default function SignaturePage() {
               justifyContent: 'center',
               alignItems: 'center',
               width: '100%',
-              marginBottom: '14px',
+              marginBottom: '16px',
             }}
           >
             <img
               src="/food-care-logo.png"
               alt="Food With Care logo"
-              width="92"
+              width="96"
               style={{
                 display: 'block',
                 margin: '0 auto',
@@ -219,8 +219,10 @@ export default function SignaturePage() {
             style={{
               marginTop: 0,
               marginBottom: '18px',
-              fontSize: '18px',
-              lineHeight: 1.35,
+              fontSize: '22px',
+              lineHeight: 1.3,
+              fontWeight: 800,
+              color: '#111827',
             }}
           >
             Thank you for choosing Food With Care
@@ -229,22 +231,24 @@ export default function SignaturePage() {
           <p
             style={{
               margin: '0 0 18px 0',
-              fontSize: '15px',
+              fontSize: '16px',
               lineHeight: 1.7,
-              color: '#374151',
+              color: '#1f2937',
+              fontWeight: 500,
             }}
           >
-            Reminder: You may leave a note on the door, just like the one you signed.
+            Reminder: You may leave a note on the door, just like the one you
+            signed.
           </p>
 
           {signature ? (
             <div
               style={{
                 marginTop: '20px',
-                border: '1px solid #d1d5db',
+                border: '1px solid #cbd5e1',
                 borderRadius: '14px',
                 padding: '12px',
-                background: '#fff',
+                background: '#ffffff',
               }}
             >
               <img
@@ -259,13 +263,15 @@ export default function SignaturePage() {
             </div>
           ) : null}
 
-          <hr style={{ margin: '18px 0' }} />
+          <hr style={{ margin: '20px 0', borderColor: '#d1d5db' }} />
 
           <h3
             style={{
               margin: '0 0 14px 0',
-              fontSize: '16px',
+              fontSize: '19px',
               lineHeight: 1.4,
+              fontWeight: 800,
+              color: '#111827',
             }}
           >
             Gracias por seleccionar Food With Care
@@ -274,9 +280,10 @@ export default function SignaturePage() {
           <p
             style={{
               margin: 0,
-              fontSize: '15px',
+              fontSize: '16px',
               lineHeight: 1.7,
-              color: '#374151',
+              color: '#1f2937',
+              fontWeight: 500,
             }}
           >
             Recuerde que puede dejar una nota como la que firmó en la puerta.
@@ -293,21 +300,30 @@ export default function SignaturePage() {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        background: '#f3f4f6',
+        background: '#eef2f7',
         padding: '20px',
       }}
     >
       <div
         style={{
-          background: 'white',
+          background: '#ffffff',
           padding: '25px',
-          borderRadius: '14px',
+          borderRadius: '16px',
           width: '350px',
           textAlign: 'center',
-          boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+          boxShadow: '0 14px 30px rgba(0,0,0,0.10)',
+          border: '1px solid #d1d5db',
         }}
       >
-        <h2 style={{ marginBottom: '10px' }}>Food With Care</h2>
+        <h2
+          style={{
+            marginBottom: '10px',
+            color: '#111827',
+            fontWeight: 800,
+          }}
+        >
+          Food With Care
+        </h2>
 
         <div
           style={{
@@ -329,12 +345,36 @@ export default function SignaturePage() {
           />
         </div>
 
-        <h2 style={{ margin: 0 }}>Please Leave The Box</h2>
-        <p style={{ marginTop: '5px' }}>Por Favor Deje La Caja</p>
+        <h2
+          style={{
+            margin: 0,
+            color: '#111827',
+            fontWeight: 800,
+          }}
+        >
+          Please Leave The Box
+        </h2>
 
-        <hr style={{ margin: '15px 0' }} />
+        <p
+          style={{
+            marginTop: '5px',
+            color: '#374151',
+            fontWeight: 600,
+          }}
+        >
+          Por Favor Deje La Caja
+        </p>
 
-        <h3>Signature / Firma</h3>
+        <hr style={{ margin: '15px 0', borderColor: '#d1d5db' }} />
+
+        <h3
+          style={{
+            color: '#111827',
+            fontWeight: 800,
+          }}
+        >
+          Signature / Firma
+        </h3>
 
         {!signed && (
           <>
@@ -343,9 +383,10 @@ export default function SignaturePage() {
               width={300}
               height={150}
               style={{
-                border: '1px solid #ccc',
+                border: '2px solid #cbd5e1',
                 borderRadius: '10px',
                 touchAction: 'none',
+                background: '#ffffff',
               }}
               onMouseDown={startDrawing}
               onMouseUp={stopDrawing}
@@ -371,8 +412,10 @@ export default function SignaturePage() {
                   flex: 1,
                   padding: '12px',
                   borderRadius: '10px',
-                  border: '1px solid #d1d5db',
-                  background: 'white',
+                  border: '1px solid #cbd5e1',
+                  background: '#ffffff',
+                  color: '#374151',
+                  fontWeight: 700,
                   cursor: sending ? 'not-allowed' : 'pointer',
                 }}
               >
@@ -387,8 +430,9 @@ export default function SignaturePage() {
                   padding: '12px',
                   borderRadius: '10px',
                   border: 'none',
-                  background: 'black',
-                  color: 'white',
+                  background: '#000000',
+                  color: '#ffffff',
+                  fontWeight: 700,
                   cursor: sending ? 'not-allowed' : 'pointer',
                 }}
               >
@@ -400,21 +444,54 @@ export default function SignaturePage() {
 
         {signed && view === 'signed' && (
           <>
+            <h3
+              style={{
+                marginTop: 0,
+                marginBottom: '10px',
+                fontSize: '18px',
+                fontWeight: 800,
+                color: '#111827',
+              }}
+            >
+              Thank you / Gracias
+            </h3>
+
+            <p
+              style={{
+                marginTop: 0,
+                marginBottom: '16px',
+                fontSize: '14px',
+                lineHeight: 1.6,
+                color: '#374151',
+                fontWeight: 500,
+              }}
+            >
+              Your signature was received successfully.
+            </p>
+
             <div
               style={{
-                border: '1px solid #ccc',
+                border: '1px solid #cbd5e1',
                 borderRadius: '12px',
                 padding: '10px',
+                background: '#ffffff',
               }}
             >
               <img
                 src={signature}
                 alt="signature"
-                style={{ width: '100%' }}
+                style={{ width: '100%', display: 'block', borderRadius: '8px' }}
               />
             </div>
 
-            <p style={{ marginTop: '10px', fontSize: '14px' }}>
+            <p
+              style={{
+                marginTop: '10px',
+                fontSize: '14px',
+                color: '#374151',
+                fontWeight: 600,
+              }}
+            >
               Signed at / Firmado: {date}
             </p>
 
@@ -422,12 +499,14 @@ export default function SignaturePage() {
               onClick={handleDone}
               style={{
                 marginTop: '15px',
-                background: 'black',
-                color: 'white',
+                background: '#000000',
+                color: '#ffffff',
                 padding: '12px',
                 width: '100%',
                 borderRadius: '10px',
                 border: 'none',
+                fontWeight: 700,
+                cursor: 'pointer',
               }}
             >
               Done / Cerrar
@@ -440,7 +519,8 @@ export default function SignaturePage() {
             style={{
               marginTop: '12px',
               fontSize: '11px',
-              color: '#6b7280',
+              color: '#4b5563',
+              fontWeight: 600,
             }}
           >
             {phoneNumber}
