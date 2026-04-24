@@ -55,6 +55,7 @@ export default function HomePage() {
             fontSize: '28px',
             lineHeight: 1.2,
             fontWeight: 'bold',
+            color: '#111827',
           }}
         >
           Food With Care
@@ -65,7 +66,7 @@ export default function HomePage() {
             margin: '0 0 40px 0',
             fontSize: '16px',
             lineHeight: 1.6,
-            color: '#6b7280',
+            color: '#374151',
           }}
         >
           Secure delivery tracking and menu selection
@@ -129,7 +130,7 @@ export default function HomePage() {
           style={{
             marginTop: '30px',
             fontSize: '13px',
-            color: '#9ca3af',
+            color: '#6b7280',
           }}
         >
           Choose an option above to get started

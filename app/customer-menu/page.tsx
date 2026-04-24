@@ -104,15 +104,15 @@ export default function CustomerMenuPage() {
             />
           </div>
 
-          <h2 style={{ marginTop: 0, marginBottom: '16px', fontSize: '20px' }}>
+          <h2 style={{ marginTop: 0, marginBottom: '16px', fontSize: '20px', color: '#111827' }}>
             Invalid or Expired Link
           </h2>
 
-          <p style={{ margin: '0 0 24px 0', color: '#6b7280', fontSize: '15px' }}>
+          <p style={{ margin: '0 0 24px 0', color: '#374151', fontSize: '15px' }}>
             The menu link you used is invalid or has expired. Please ask your service provider to send you a new link.
           </p>
 
-          <p style={{ margin: 0, fontSize: '13px', color: '#9ca3af' }}>
+          <p style={{ margin: 0, fontSize: '13px', color: '#6b7280' }}>
             If you continue to have issues, contact customer support.
           </p>
         </div>

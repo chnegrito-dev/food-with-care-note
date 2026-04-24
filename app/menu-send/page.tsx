@@ -81,6 +81,7 @@ export default function MenuSendPage() {
     borderRadius: '8px',
     fontSize: '16px',
     fontFamily: 'inherit',
+    color: '#1f2937',
   };
 
   return (
@@ -133,6 +134,7 @@ export default function MenuSendPage() {
               marginBottom: '8px',
               fontSize: '22px',
               textAlign: 'center',
+              color: '#111827',
             }}
           >
             Prepare Menu Link
@@ -142,7 +144,7 @@ export default function MenuSendPage() {
             style={{
               margin: '0 0 20px 0',
               fontSize: '14px',
-              color: '#6b7280',
+              color: '#374151',
               textAlign: 'center',
             }}
           >
@@ -153,7 +155,7 @@ export default function MenuSendPage() {
 
           {!generatedLink ? (
             <>
-              <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: '#1f2937' }}>
                 Case ID *
               </label>
               <input
@@ -161,10 +163,10 @@ export default function MenuSendPage() {
                 placeholder="Enter case ID"
                 value={caseId}
                 onChange={(e) => setCaseId(e.target.value)}
-                style={inputStyle}
+                style={{...inputStyle, color: '#1f2937'}}
               />
 
-              <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: '#1f2937' }}>
                 Phone Number *
               </label>
               <input
@@ -172,7 +174,7 @@ export default function MenuSendPage() {
                 placeholder="Enter phone number"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
-                style={inputStyle}
+                style={{...inputStyle, color: '#1f2937'}}
               />
 
               <button
@@ -197,7 +199,7 @@ export default function MenuSendPage() {
           ) : (
             <>
               <div style={cardStyle}>
-                <h3 style={{ marginTop: 0, marginBottom: '10px', fontSize: '16px' }}>
+                <h3 style={{ marginTop: 0, marginBottom: '10px', fontSize: '16px', color: '#111827' }}>
                   ✅ Link Generated
                 </h3>
 
@@ -238,7 +240,7 @@ export default function MenuSendPage() {
               <p
                 style={{
                   fontSize: '12px',
-                  color: '#6b7280',
+                  color: '#374151',
                   marginBottom: '16px',
                 }}
               >
@@ -279,7 +281,7 @@ export default function MenuSendPage() {
             borderRadius: '12px',
             border: '1px solid #e5e7eb',
             fontSize: '13px',
-            color: '#6b7280',
+            color: '#374151',
           }}
         >
           <p style={{ marginTop: 0 }}>

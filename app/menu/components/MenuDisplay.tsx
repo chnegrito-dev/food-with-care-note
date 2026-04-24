@@ -86,18 +86,18 @@ export function MenuDisplay({ customerData, onBack, caseId = '', token = '' }: M
             boxShadow: '0 1px 4px rgba(15, 23, 42, 0.06)',
           }}
         >
-          <h2 style={{ marginTop: 0, marginBottom: '10px', fontSize: '22px' }}>Menu Selection</h2>
-          <p style={{ margin: '0 0 12px 0', color: '#475569', fontSize: '14px' }}>
+          <h2 style={{ marginTop: 0, marginBottom: '10px', fontSize: '22px', color: '#111827' }}>Menu Selection</h2>
+          <p style={{ margin: '0 0 12px 0', color: '#374151', fontSize: '14px' }}>
             {customerData.firstName} {customerData.lastName} • {customerData.email}
           </p>
-          <p style={{ margin: 0, fontSize: '13px', color: '#64748b', lineHeight: 1.6 }}>
+          <p style={{ margin: 0, fontSize: '13px', color: '#6b7280', lineHeight: 1.6 }}>
             <strong>Legend:</strong> D = Diabetic | LF/LC = Low Fat/Low Cholesterol | NAS = No Added Salt | R = Regular | RS = Reduced Sodium | No label = Unrestricted
           </p>
         </div>
 
         {menuSections.map((section) => (
           <section key={section.title} style={{ marginBottom: '18px' }}>
-            <h3 style={{ margin: '0 0 10px 0', fontSize: '17px', color: '#0f172a' }}>{section.title}</h3>
+            <h3 style={{ margin: '0 0 10px 0', fontSize: '17px', color: '#111827' }}>{section.title}</h3>
             <div style={{ background: 'white', borderRadius: '16px', overflow: 'hidden' }}>
               {section.items.map((item, index) => {
                 const value = quantities[item.name] ?? '';
@@ -114,9 +114,9 @@ export function MenuDisplay({ customerData, onBack, caseId = '', token = '' }: M
                     }}
                   >
                     <div style={{ flex: 1, minWidth: 0, paddingRight: '12px' }}>
-                      <div style={{ fontSize: '15px', lineHeight: 1.4, color: '#0f172a' }}>{item.name}</div>
+                      <div style={{ fontSize: '15px', lineHeight: 1.4, color: '#1f2937' }}>{item.name}</div>
                       {item.diets.length > 0 && (
-                        <div style={{ marginTop: '4px', fontSize: '12px', color: '#64748b' }}>
+                        <div style={{ marginTop: '4px', fontSize: '12px', color: '#6b7280' }}>
                           {item.diets.join(', ')}
                         </div>
                       )}
@@ -135,7 +135,7 @@ export function MenuDisplay({ customerData, onBack, caseId = '', token = '' }: M
                         borderRadius: '12px',
                         fontSize: '15px',
                         textAlign: 'center',
-                        color: '#0f172a',
+                        color: '#1f2937',
                         background: '#f8fafc',
                       }}
                     />
@@ -172,7 +172,7 @@ export function MenuDisplay({ customerData, onBack, caseId = '', token = '' }: M
               padding: '14px',
               borderRadius: '12px',
               border: 'none',
-              background: totalItems > 0 ? '#0f172a' : '#cbd5e1',
+              background: totalItems > 0 ? '#111827' : '#cbd5e1',
               color: 'white',
               fontSize: '16px',
               fontWeight: 600,

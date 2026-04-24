@@ -585,7 +585,7 @@ export default function DriverPage() {
                   <span
                     style={{
                       fontSize: '13px',
-                      color: '#4b5563',
+                      color: '#6b7280',
                     }}
                   >
                     {uploadingPhoto
@@ -662,13 +662,12 @@ export default function DriverPage() {
                 padding: '14px 18px',
                 borderRadius: '14px',
                 border: 'none',
-                background: !canSendSms || openingSms ? '#9ca3af' : '#111827',
-                color: '#fff',
+                background: !canSendSms || openingSms ? '#d1d5db' : '#111827',
+                color: !canSendSms || openingSms ? '#6b7280' : '#fff',
                 fontWeight: 800,
                 fontSize: '15px',
                 cursor:
                   !canSendSms || openingSms ? 'not-allowed' : 'pointer',
-                opacity: !canSendSms || openingSms ? 0.8 : 1,
               }}
             >
               {uploadingPhoto

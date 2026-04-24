@@ -48,6 +48,7 @@ export function MenuOnboarding({
     borderRadius: '8px',
     fontSize: '16px',
     fontFamily: 'inherit',
+    color: '#1f2937',
   };
 
   const labelStyle: React.CSSProperties = {
@@ -55,7 +56,7 @@ export function MenuOnboarding({
     marginBottom: '6px',
     fontSize: '14px',
     fontWeight: '600',
-    color: '#374151',
+    color: '#1f2937',
   };
 
   return (
@@ -76,6 +77,7 @@ export function MenuOnboarding({
           marginBottom: '24px',
           fontSize: '24px',
           textAlign: 'center',
+          color: '#111827',
         }}
       >
         Customer Information

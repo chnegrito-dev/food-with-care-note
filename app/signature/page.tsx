@@ -230,10 +230,11 @@ export default function SignaturePage() {
 
           <p
             style={{
-              margin: '0 0 18px 0',
+              marginTop: '0px',
+              marginBottom: '18px',
               fontSize: '16px',
               lineHeight: 1.7,
-              color: '#1f2937',
+              color: '#374151',
               fontWeight: 500,
             }}
           >
@@ -282,7 +283,7 @@ export default function SignaturePage() {
               margin: 0,
               fontSize: '16px',
               lineHeight: 1.7,
-              color: '#1f2937',
+              color: '#374151',
               fontWeight: 500,
             }}
           >
@@ -488,7 +489,7 @@ export default function SignaturePage() {
               style={{
                 marginTop: '10px',
                 fontSize: '14px',
-                color: '#374151',
+                color: '#6b7280',
                 fontWeight: 600,
               }}
             >
@@ -519,7 +520,7 @@ export default function SignaturePage() {
             style={{
               marginTop: '12px',
               fontSize: '11px',
-              color: '#4b5563',
+              color: '#6b7280',
               fontWeight: 600,
             }}
           >
