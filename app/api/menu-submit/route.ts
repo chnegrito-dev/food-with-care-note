@@ -105,14 +105,23 @@ export async function POST(req: Request) {
 </html>
     `;
 
-    const emailTo = process.env.EMAIL_TO || 'delivery@example.com';
+    const emailFrom = process.env.EMAIL_FROM;
 
-    const response = await resend.emails.send({
-      from: 'Food With Care <noreply@foodwithcare.app>',
-      to: emailTo,
-      subject: `Menu Selection - ${customer.firstName} ${customer.lastName}${caseId ? ` (Case ${caseId})` : ''}`,
-      html: htmlContent,
-    });
+if (!emailFrom) {
+  return NextResponse.json(
+    { error: 'EMAIL_FROM is missing' },
+    { status: 500 }
+  );
+}
+
+const emailTo = process.env.EMAIL_TO || 'delivery@example.com';
+
+const response = await resend.emails.send({
+  from: `Food With Care <${emailFrom}>`,
+  to: emailTo,
+  subject: `Menu Selection - ${customer.firstName} ${customer.lastName}${caseId ? ` (Case ${caseId})` : ''}`,
+  html: htmlContent,
+});
 
     if (response.error) {
       console.error('Resend error:', response.error);
