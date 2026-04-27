@@ -229,7 +229,7 @@ export default function DriverPage() {
     params.set('driverPhotoUrl', uploadedPhotoUrl);
     params.set('linkId', linkId);
 
-    const signLink = `${baseClientUrl}/?${params.toString()}`;
+    const signLink = `${baseClientUrl}/signature?${params.toString()}`;
     const smsBody = `Food With Care: secure link to sign for your delivery.\n${signLink}`;
     const smsHref = `sms:${cleanedPhone}?body=${encodeURIComponent(smsBody)}`;
 
@@ -248,7 +248,7 @@ export default function DriverPage() {
     border: '1px solid #e5e7eb',
     borderRadius: '16px',
     padding: '18px',
-    background: '#fafafa',
+    background: '#ffffff',
   };
 
   const inputStyle: React.CSSProperties = {
@@ -338,7 +338,7 @@ export default function DriverPage() {
               style={{
                 margin: '8px 0 0 0',
                 fontSize: '15px',
-                opacity: 0.97,
+                opacity: 1,
                 textShadow: '0 2px 10px rgba(0,0,0,0.35)',
               }}
             >

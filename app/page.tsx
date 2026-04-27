@@ -80,7 +80,7 @@ export default function HomePage() {
           }}
         >
           <button
-            onClick={() => router.push('/signature')}
+            onClick={() => router.push('/driver')}
             style={{
               padding: '18px 24px',
               borderRadius: '14px',

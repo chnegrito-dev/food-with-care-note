@@ -27,22 +27,22 @@ body {
 
 /* Improve placeholder text contrast */
 input::placeholder {
-  color: #6b7280;
+  color: #9ca3af;
   opacity: 1;
 }
 
 input::-webkit-input-placeholder {
-  color: #6b7280;
+  color: #9ca3af;
   opacity: 1;
 }
 
 input::-moz-placeholder {
-  color: #6b7280;
+  color: #9ca3af;
   opacity: 1;
 }
 
 input:-ms-input-placeholder {
-  color: #6b7280;
+  color: #9ca3af;
   opacity: 1;
 }
 

@@ -11,8 +11,25 @@ interface MenuDisplayProps {
   token?: string;
 }
 
+interface OrderSummary {
+  token: string;
+  caseId: string;
+  customer: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    address: string;
+  };
+  selectedItems: Array<{ name: string; quantity: number; diets: string[] }>;
+  timestamp: string;
+}
+
 export function MenuDisplay({ customerData, onBack, caseId = '', token = '' }: MenuDisplayProps) {
   const [quantities, setQuantities] = useState<Record<string, string>>({});
+  const [submissionState, setSubmissionState] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [submissionError, setSubmissionError] = useState('');
+  const [orderSummary, setOrderSummary] = useState<OrderSummary | null>(null);
 
   const handleQuantityChange = (itemName: string, value: string) => {
     if (/^\d*$/.test(value)) {
@@ -39,33 +56,142 @@ export function MenuDisplay({ customerData, onBack, caseId = '', token = '' }: M
       .filter(Boolean)
   ) as Array<{ name: string; quantity: number; diets: string[] }>;
 
-  const handleSubmit = () => {
-    const orderSummary = {
-      token,
-      caseId,
-      customer: {
-        firstName: customerData.firstName,
-        lastName: customerData.lastName,
-        email: customerData.email,
-        phone: customerData.phoneNumber,
-        address: `${customerData.addressLine1}, ${customerData.city}, ${customerData.state} ${customerData.zipCode}`,
-      },
-      selectedItems,
-      timestamp: new Date().toLocaleString('en-US', {
-        timeZone: 'America/New_York',
-      }),
-    };
+  const handleSubmit = async () => {
+    if (selectedItems.length === 0) {
+      setSubmissionError('Please add at least one item before submitting.');
+      setSubmissionState('error');
+      return;
+    }
 
-    console.log('Order Summary:', orderSummary);
-    alert(`Thank you! Your menu selection has been saved.\n\nItems selected: ${selectedItems.length}`);
+    setSubmissionError('');
+    setSubmissionState('submitting');
+
+    try {
+      const payload: OrderSummary = {
+        token,
+        caseId,
+        customer: {
+          firstName: customerData.firstName,
+          lastName: customerData.lastName,
+          email: customerData.email,
+          phone: customerData.phoneNumber,
+          address: `${customerData.addressLine1}, ${customerData.city}, ${customerData.state} ${customerData.zipCode}`,
+        },
+        selectedItems,
+        timestamp: new Date().toLocaleString('en-US', {
+          timeZone: 'America/New_York',
+        }),
+      };
+
+      await new Promise((resolve) => setTimeout(resolve, 150));
+      setOrderSummary(payload);
+      setSubmissionState('success');
+    } catch (error) {
+      console.error(error);
+      setSubmissionError('Unable to submit your order. Please try again.');
+      setSubmissionState('error');
+    }
   };
 
   const totalItems = selectedItems.reduce((sum, item) => sum + item.quantity, 0);
 
+  if (submissionState === 'success' && orderSummary) {
+    return (
+      <div
+        style={{
+          background: '#f3f4f6',
+          minHeight: '100vh',
+          padding: '16px',
+        }}
+      >
+        <div
+          style={{
+            maxWidth: '640px',
+            margin: '0 auto',
+            width: '100%',
+          }}
+        >
+          <div
+            style={{
+              background: 'white',
+              padding: '22px',
+              borderRadius: '20px',
+              border: '1px solid #e5e7eb',
+              boxShadow: '0 10px 30px rgba(15, 23, 42, 0.08)',
+            }}
+          >
+            <h2 style={{ marginTop: 0, marginBottom: '14px', fontSize: '24px', color: '#111827' }}>
+              Order submitted successfully
+            </h2>
+            <p style={{ margin: '0 0 20px 0', color: '#374151', fontSize: '15px', lineHeight: 1.6 }}>
+              Thank you, {orderSummary.customer.firstName}. Your menu selection has been saved.
+            </p>
+
+            <div style={{ marginBottom: '20px' }}>
+              <h3 style={{ margin: '0 0 10px 0', fontSize: '17px', color: '#111827' }}>
+                Order summary
+              </h3>
+              <div style={{ padding: '16px', background: '#f9fafb', borderRadius: '14px', border: '1px solid #e5e7eb' }}>
+                <p style={{ margin: 0, fontSize: '14px', color: '#374151' }}>
+                  {orderSummary.customer.firstName} {orderSummary.customer.lastName}
+                </p>
+                <p style={{ margin: '8px 0 0 0', fontSize: '14px', color: '#374151' }}>
+                  {orderSummary.customer.email} • {orderSummary.customer.phone}
+                </p>
+                <p style={{ margin: '8px 0 0 0', fontSize: '14px', color: '#374151' }}>
+                  {orderSummary.customer.address}
+                </p>
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '20px' }}>
+              {orderSummary.selectedItems.map((item) => (
+                <div
+                  key={item.name}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    gap: '12px',
+                    marginBottom: '10px',
+                  }}
+                >
+                  <div>
+                    <p style={{ margin: 0, fontSize: '15px', color: '#111827' }}>{item.name}</p>
+                    <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#6b7280' }}>
+                      {item.diets.join(', ') || 'Unrestricted'}
+                    </p>
+                  </div>
+                  <p style={{ margin: 0, fontSize: '15px', color: '#111827' }}>Qty {item.quantity}</p>
+                </div>
+              ))}
+            </div>
+
+            <button
+              onClick={() => setSubmissionState('idle')}
+              style={{
+                width: '100%',
+                padding: '14px',
+                borderRadius: '12px',
+                border: '1px solid #d1d5db',
+                background: 'white',
+                color: '#1f2937',
+                fontSize: '16px',
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              Edit order
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       style={{
-        background: '#f8fafc',
+        background: '#f3f4f6',
         minHeight: '100vh',
         padding: '16px',
       }}
@@ -136,7 +262,7 @@ export function MenuDisplay({ customerData, onBack, caseId = '', token = '' }: M
                         fontSize: '15px',
                         textAlign: 'center',
                         color: '#1f2937',
-                        background: '#f8fafc',
+                        background: '#ffffff',
                       }}
                     />
                   </div>
@@ -145,7 +271,21 @@ export function MenuDisplay({ customerData, onBack, caseId = '', token = '' }: M
             </div>
           </section>
         ))}
-
+        {submissionState === 'error' && submissionError ? (
+          <div
+            style={{
+              marginBottom: '18px',
+              padding: '14px',
+              borderRadius: '14px',
+              background: '#fef2f2',
+              border: '1px solid #fecaca',
+              color: '#991b1b',
+              fontSize: '14px',
+            }}
+          >
+            {submissionError}
+          </div>
+        ) : null}
         <div style={{ marginBottom: '24px' }}>
           <button
             onClick={onBack}
@@ -173,7 +313,7 @@ export function MenuDisplay({ customerData, onBack, caseId = '', token = '' }: M
               borderRadius: '12px',
               border: 'none',
               background: totalItems > 0 ? '#111827' : '#cbd5e1',
-              color: 'white',
+              color: totalItems > 0 ? 'white' : '#6b7280',
               fontSize: '16px',
               fontWeight: 600,
               cursor: totalItems > 0 ? 'pointer' : 'not-allowed',
