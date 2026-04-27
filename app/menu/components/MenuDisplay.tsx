@@ -83,7 +83,19 @@ export function MenuDisplay({ customerData, onBack, caseId = '', token = '' }: M
         }),
       };
 
-      await new Promise((resolve) => setTimeout(resolve, 150));
+      const response = await fetch('/api/menu-submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to submit order');
+      }
+
       setOrderSummary(payload);
       setSubmissionState('success');
     } catch (error) {
@@ -209,7 +221,8 @@ export function MenuDisplay({ customerData, onBack, caseId = '', token = '' }: M
             padding: '18px',
             borderRadius: '16px',
             marginBottom: '18px',
-            boxShadow: '0 1px 4px rgba(15, 23, 42, 0.06)',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
+            border: '1px solid #e5e7eb',
           }}
         >
           <h2 style={{ marginTop: 0, marginBottom: '10px', fontSize: '22px', color: '#111827' }}>Menu Selection</h2>
@@ -224,7 +237,7 @@ export function MenuDisplay({ customerData, onBack, caseId = '', token = '' }: M
         {menuSections.map((section) => (
           <section key={section.title} style={{ marginBottom: '18px' }}>
             <h3 style={{ margin: '0 0 10px 0', fontSize: '17px', color: '#111827' }}>{section.title}</h3>
-            <div style={{ background: 'white', borderRadius: '16px', overflow: 'hidden' }}>
+            <div style={{ background: 'white', borderRadius: '16px', overflow: 'hidden', border: '1px solid #e5e7eb' }}>
               {section.items.map((item, index) => {
                 const value = quantities[item.name] ?? '';
                 return (
@@ -257,12 +270,12 @@ export function MenuDisplay({ customerData, onBack, caseId = '', token = '' }: M
                       style={{
                         width: '68px',
                         padding: '10px 12px',
-                        border: '1px solid #cbd5e1',
-                        borderRadius: '12px',
-                        fontSize: '15px',
-                        textAlign: 'center',
-                        color: '#1f2937',
-                        background: '#ffffff',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '12px',
+                      fontSize: '15px',
+                      textAlign: 'center',
+                      color: '#1f2937',
+                      background: 'white',
                       }}
                     />
                   </div>
@@ -312,7 +325,7 @@ export function MenuDisplay({ customerData, onBack, caseId = '', token = '' }: M
               padding: '14px',
               borderRadius: '12px',
               border: 'none',
-              background: totalItems > 0 ? '#111827' : '#cbd5e1',
+              background: totalItems > 0 ? '#000000' : '#cbd5e1',
               color: totalItems > 0 ? 'white' : '#6b7280',
               fontSize: '16px',
               fontWeight: 600,

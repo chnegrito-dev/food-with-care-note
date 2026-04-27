@@ -104,7 +104,7 @@ export default function MenuSendPage() {
             padding: '24px',
             borderRadius: '16px',
             marginBottom: '20px',
-            boxShadow: '0 10px 25px rgba(0,0,0,0.08)',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
             border: '1px solid #e5e7eb',
           }}
         >

@@ -80,7 +80,8 @@ export default function DriverPage() {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data?.error || 'Failed uploading driver photo');
+      const errorMessage = data?.error || 'Failed uploading driver photo';
+      throw new Error(errorMessage);
     }
 
     return data.url as string;
@@ -117,8 +118,9 @@ export default function DriverPage() {
       const url = await uploadDriverPhoto(file, caseId.trim());
       setUploadedPhotoUrl(url);
     } catch (error) {
-      console.error(error);
-      alert('Error uploading photo / Error subiendo la foto');
+      console.error('Photo upload error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      alert(`Error uploading photo: ${errorMessage} / Error subiendo la foto: ${errorMessage}`);
     } finally {
       setUploadingPhoto(false);
     }
@@ -255,14 +257,14 @@ export default function DriverPage() {
     width: '100%',
     padding: '14px 16px',
     borderRadius: '12px',
-    border: '1px solid #cbd5e1',
+    border: '1px solid #d1d5db',
     fontSize: '18px',
     lineHeight: 1.2,
     outline: 'none',
     boxSizing: 'border-box',
     background: '#ffffff',
-    color: '#111827',
-    WebkitTextFillColor: '#111827',
+    color: '#1f2937',
+    WebkitTextFillColor: '#1f2937',
     opacity: 1,
   };
 
@@ -283,7 +285,7 @@ export default function DriverPage() {
           background: '#ffffff',
           borderRadius: '24px',
           overflow: 'hidden',
-          boxShadow: '0 18px 40px rgba(0,0,0,0.10)',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
           border: '1px solid #e5e7eb',
         }}
       >

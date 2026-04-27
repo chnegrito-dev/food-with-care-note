@@ -191,8 +191,8 @@ export default function SignaturePage() {
             width: '100%',
             maxWidth: '380px',
             textAlign: 'center',
-            boxShadow: '0 14px 30px rgba(0,0,0,0.10)',
-            border: '1px solid #d1d5db',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
+            border: '1px solid #e5e7eb',
           }}
         >
           <div

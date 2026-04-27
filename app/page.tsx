@@ -24,7 +24,7 @@ export default function HomePage() {
           width: '100%',
           maxWidth: '420px',
           textAlign: 'center',
-          boxShadow: '0 10px 35px rgba(0,0,0,0.1)',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.07)',
           border: '1px solid #e5e7eb',
         }}
       >
